@@ -75,7 +75,7 @@ async function generateWorklogsContent(worklogs: Worklog[]) {
                 interval: { colSpan: 1, content: intervalRows[index], hAlign: 'right' },
                 issueKey: { colSpan: 1, content: issueKey, hAlign: 'right' },
                 duration: { colSpan: 1, content: worklog.duration, hAlign: 'right' },
-                description: cliTruncate(worklog.description, 30),
+                description: cliTruncate(worklog.description, 40),
                 taskUrl: worklog.link
             }
             return Object.values(tableContent)

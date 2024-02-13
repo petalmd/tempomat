@@ -2,13 +2,13 @@ import axios from 'axios'
 import authenticator from '../config/authenticator'
 
 const tempoAxios = axios.create({
-    baseURL: 'https://api.tempo.io/core/3'
+    baseURL: 'https://api.tempo.io/4'
 })
 
 tempoAxios.interceptors.request.use(async function (axiosConfig) {
-    if (await authenticator.hasTempoToken()) {
-        const credentials = await authenticator.getCredentials()
-        axiosConfig.headers.Authorization = `Bearer ${credentials.tempoToken}`
+    const tempoToken = await authenticator.getTempoToken()
+    if ( tempoToken !== undefined ) {
+        axiosConfig.headers.Authorization = `Bearer ${tempoToken}`
     }
     return axiosConfig
 })

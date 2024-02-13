@@ -9,9 +9,11 @@ const writeFileAsync = promisify(fs.writeFile)
 
 export type Config = {
     tempoToken?: string
+    jiraToken?: string
     accountId?: string
     aliases?: Map<string, string>
     trackers?: Map<string, Tracker>
+    usermail?: string
 }
 
 export function configFilePath(): string {
@@ -34,6 +36,7 @@ export default {
         } catch (e) {
             return {
                 tempoToken: undefined,
+                jiraToken: undefined,
                 accountId: undefined,
                 aliases: undefined,
                 trackers: undefined

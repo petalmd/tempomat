@@ -4,13 +4,22 @@ import tempoAxios from './tempoAxios'
 import flags from '../globalFlags'
 import { appName } from '../appName'
 
+// https://apidocs.tempo.io/#tag/Worklogs/operation/getWorklogs
 export type AddWorklogRequest = {
-    issueKey: string;
-    timeSpentSeconds: number;
-    startDate: string;
-    startTime: string;
-    description?: string;
-    remainingEstimateSeconds?: number
+    // attributes: object,
+    authorAccountId?: string,
+    billableSeconds: number,
+    description?: string,
+    issueId: number,
+    remainingEstimateSeconds?: number,
+    startDate: string,
+    startTime: string,
+    timeSpentSeconds: number
+
+    // ? This is what the app calls...
+    // workerId: string,
+    // started: string,
+    // originTaskId: string,
 }
 
 export type GetWorklogsRequest = {
@@ -38,29 +47,31 @@ export type GetWorklogsResponse = {
 }
 
 export type WorklogEntity = {
+    self: string;
     tempoWorklogId: string;
+    issue: IssueEntity;
     startDate: string;
     startTime: string;
     author: AuthorEntity;
-    issue: IssueEntity;
     description: string;
     timeSpentSeconds: number;
 }
 
 export type AuthorEntity = {
+    self: string;
     accountId: string;
 }
 
 export type IssueEntity = {
     self: string;
-    key: string;
+    id: string;
 }
 
 export default {
 
     async addWorklog(request: AddWorklogRequest): Promise<WorklogEntity> {
-        const credentials = await authenticator.getCredentials()
-        const body = { ...request, authorAccountId: credentials.accountId }
+        const accountId = await authenticator.getAccountId()
+        const body = { ...request, authorAccountId: accountId }
         return execute(async () => {
             const response = await tempoAxios.post('/worklogs', body)
             debugLog(response)
@@ -84,9 +95,9 @@ export default {
     },
 
     async getWorklogs(request: GetWorklogsRequest): Promise<GetWorklogsResponse> {
-        const credentials = await authenticator.getCredentials()
+        const accountId = await authenticator.getAccountId()
         return execute(async () => {
-            const response = await tempoAxios.get(`/worklogs/user/${credentials.accountId}`, {
+            const response = await tempoAxios.get(`/worklogs/user/${accountId}`, {
                 params: { from: request.fromDate, to: request.toDate, limit: 1000 }
             })
             debugLog(response)
